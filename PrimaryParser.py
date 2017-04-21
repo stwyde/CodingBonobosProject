@@ -1,8 +1,8 @@
-import newspaper
+from nltk.corpus import stopwords
 from newspaper import Article
 import feedparser
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
-
+removeSet = set(stopwords.words('english'))
 class ParsedEntry:
     title = ""
     text = ""
@@ -19,9 +19,10 @@ class ParsedEntry:
         self.title = name
         wordsList = self.text.split()
         for word in wordsList:
-            if word not in self.occuranceTable.keys():
-                self.occuranceTable[word] = 0
-            self.occuranceTable[word] = self.occuranceTable[word] + 1
+            if word not in removeSet:
+                if word not in self.occuranceTable.keys():
+                    self.occuranceTable[word] = 0
+                self.occuranceTable[word] = self.occuranceTable[word] + 1
 
 
 
