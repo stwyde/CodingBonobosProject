@@ -1,8 +1,10 @@
 from nltk.corpus import stopwords
 from newspaper import Article
 import feedparser
+import operator
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
 removeSet = set(stopwords.words('english'))
+removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many'])
 class ParsedEntry:
     #Not called article to avoid conflict with Newspaper package
     def __init__(self, name, body, link):
@@ -20,23 +22,27 @@ class ParsedEntry:
 
         #creates dictionary with word occurances in the occurrenceTable dictionary object.
         wordsList = self.text.split()
+        self.cleanWordsList = []
         for word in wordsList:
-            if word in removeSet:
-                wordsList.remove(word)
-            elif word not in removeSet:
+            if word not in removeSet:
                 if word not in self.tagTable.keys():
                     self.tagTable[word] = 0
                 self.tagTable[word] = self.tagTable[word] + 1
+                self.cleanWordsList.append(word)
 
 
         #standardizes tagList to be percentages
-        wordCount = len(wordsList)
-        for word in wordsList:
-            word1 = word
-            self.tagTable[word] = self.tagTable[word1] / wordCount
+        wordCount = len(self.cleanWordsList)
+        for word in self.cleanWordsList:
+            rawVal = self.tagTable[word]
+            self.tagTable[word] = rawVal / wordCount
 
     def getTopTags(self, number):
-        topTags = dict(sorted(self.tagTable.keys(), key=self.tagTable.__getitem__)[:number])
+        #http://stackoverflow.com/questions/7197315/5-maximum-values-in-a-python-dictionary
+        topKeys = (sorted(self.tagTable.keys(), key=operator.itemgetter(1))[:number])
+        topTags = {}
+        for key in topKeys:
+            topTags[key] = self.tagTable[key]
         return topTags
 
 
@@ -72,11 +78,13 @@ def articleDistance(art1, art2):
     
 
 articlesSet = []
+i = 0
 for entry in NYTAmericas.entries:
     print(entry.link)
     toParse = Article(entry.link)
     toParse.download()
     toParse.parse()
     articlesSet.append(ParsedEntry(toParse.title, toParse.text, entry.link))
-    print((articlesSet[len(articlesSet)-1].tagTable))
+    print(articlesSet[i].getTopTags(10))
+    i+=1
 
