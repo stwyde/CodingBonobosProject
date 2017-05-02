@@ -65,7 +65,8 @@ def articleDistance(art1, art2):
     """returns the pairwise distance between two artilces, calculated from the tags"""
     tags1 = list(art1.tagTable.keys())
     tags2 = list(art2.tagTable.keys())
-    tags = tags2.append(tags2)
+    tags = tags1[:]
+    tags.append(tags2)
 
     distance = 0
 
@@ -76,8 +77,8 @@ def articleDistance(art1, art2):
             value1 = art1.tagTable[tag]
         if tag in tags2:
             value2 = art2.tagTable[tag]
-        distance = abs(value1 - value2)
-        disatnce = distance / len(tags)
+        distance = distance + abs(value1 - value2)
+        distance = distance / len(tags)
 
     return distance
     
@@ -93,4 +94,7 @@ for entry in NYTAmericas.entries:
     print(articlesSet[i].tagTable)
     print(articlesSet[i].getTopTags(10))
     i+=1
+
+print(articleDistance(articlesSet[0], articlesSet[1]))
+
 
