@@ -5,11 +5,8 @@ NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Amer
 removeSet = set(stopwords.words('english'))
 class ParsedEntry:
     #Not called article to avoid conflict with Newspaper package
-    title = ""
-    text = ""
-    url = ""
-    tagTable = {}
     def __init__(self, name, body, link):
+        self.tagTable = {}
         self.url = link
         self.title = name
         #sanitizes text, sets everything to lowercase, removes numbers and symbols but keeps spaces leading to just words separated by spaces.
@@ -24,18 +21,19 @@ class ParsedEntry:
         #creates dictionary with word occurances in the occurrenceTable dictionary object.
         wordsList = self.text.split()
         for word in wordsList:
-            if word not in removeSet:
+            if word in removeSet:
+                wordsList.remove(word)
+            elif word not in removeSet:
                 if word not in self.tagTable.keys():
                     self.tagTable[word] = 0
                 self.tagTable[word] = self.tagTable[word] + 1
-            if word in removeSet:
-                wordsList.remove(word)
 
 
         #standardizes tagList to be percentages
-        #wordCount = len(wordsList)
-        #for word in wordsList:
-        #   self.tagTable[word] = self.tagTable[word] / wordCount
+        wordCount = len(wordsList)
+        for word in wordsList:
+            word1 = word
+            self.tagTable[word] = self.tagTable[word1] / wordCount
 
     def getTopTags(self, number):
         topTags = dict(sorted(self.tagTable.keys(), key=self.tagTable.__getitem__)[:number])
