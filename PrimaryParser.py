@@ -4,10 +4,11 @@ import feedparser
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
 removeSet = set(stopwords.words('english'))
 class ParsedEntry:
+    """Not called article to avoid conflict with Newspaper package"""
     title = ""
     text = ""
     url = ""
-    occuranceTable = {}
+    occurrenceTable = {}
     def __init__(self, name, body, link):
         self.url = link
         lowercaseText = body.lower()
@@ -20,11 +21,19 @@ class ParsedEntry:
         wordsList = self.text.split()
         for word in wordsList:
             if word not in removeSet:
-                if word not in self.occuranceTable.keys():
-                    self.occuranceTable[word] = 0
-                self.occuranceTable[word] = self.occuranceTable[word] + 1
+                if word not in self.occurrenceTable.keys():
+                    self.occurrenceTable[word] = 0
+                self.occurrenceTable[word] = self.occurrenceTable[word] + 1
 
+class tag:
+    """Stores all information about a given tag, including lists of which articles
+have the tag and the number of times the keywork appears in each."""
+    def __init__(self, name):
+        self.name = name
+        self.taggedArticles = []
 
+    def setArticles(self, articles):
+        self.taggedArticles.append(articles)
 
 for entry in NYTAmericas.entries:
     print(entry.link)
@@ -32,4 +41,4 @@ for entry in NYTAmericas.entries:
     toParse.download()
     toParse.parse()
     parsedArticle = ParsedEntry(toParse.title, toParse.text, entry.link)
-    print((parsedArticle.occuranceTable))
+    print((parsedArticle.occurrenceTable))
