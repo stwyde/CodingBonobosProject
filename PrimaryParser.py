@@ -50,6 +50,27 @@ have the tag and the number of times the keywork appears in each."""
     def setArticles(self, articles):
         self.taggedArticles.append(articles)
 
+def articleDistance(art1, art2):
+    """returns the pairwise distance between two artilces, calculated from the tags"""
+    tags1 = list(art1.tagTable.keys())
+    tags2 = list(art2.tagTable.keys())
+    tags = tags2.append(tags2)
+
+    distance = 0
+
+    for tag in tags:
+        value1 = 0
+        value2 = 0
+        if tag in tags1:
+            value1 = art1.tagTable[tag]
+        if tag in tags2:
+            value2 = art2.tagTable[tag]
+        distance = abs(value1 - value2)
+        disatnce = distance / len(tags)
+
+    return distance
+    
+
 articlesSet = []
 for entry in NYTAmericas.entries:
     print(entry.link)
