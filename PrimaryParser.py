@@ -11,15 +11,16 @@ class ParsedEntry:
     tagTable = {}
     def __init__(self, name, body, link):
         self.url = link
+        self.title = name
         #sanitizes text, sets everything to lowercase, removes numbers and symbols but keeps spaces leading to just words separated by spaces.
         lowercaseText = body.lower()
         newStr = ""
         for c in lowercaseText:
             if c.isalpha() or c==" ":
                 newStr+=c
-        #sets text and title values for the Parsed Entry to reference
         self.text = newStr
-        self.title = name
+
+
         #creates dictionary with word occurances in the occurrenceTable dictionary object.
         wordsList = self.text.split()
         for word in wordsList:
@@ -27,7 +28,11 @@ class ParsedEntry:
                 if word not in self.tagTable.keys():
                     self.tagTable[word] = 0
                 self.tagTable[word] = self.tagTable[word] + 1
-        #standardizes tagList to be percentagesnt
+            if word in removeSet:
+                wordsList.remove(word)
+
+
+        #standardizes tagList to be percentages
         wordCount = len(self.tagTable)
         for word in wordsList:
             self.tagTable[word] = self.tagTable[word] / wordCount
