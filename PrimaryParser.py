@@ -4,7 +4,7 @@ import feedparser
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
 removeSet = set(stopwords.words('english'))
 class ParsedEntry:
-    """Not called article to avoid conflict with Newspaper package"""
+    #Not called article to avoid conflict with Newspaper package
     title = ""
     text = ""
     url = ""
@@ -33,9 +33,14 @@ class ParsedEntry:
 
 
         #standardizes tagList to be percentages
-        wordCount = len(wordsList)
-        for word in wordsList:
-            self.tagTable[word] = self.tagTable[word] / wordCount
+        #wordCount = len(wordsList)
+        #for word in wordsList:
+        #   self.tagTable[word] = self.tagTable[word] / wordCount
+
+    def getTopTags(self, number):
+        topTags = dict(sorted(self.tagTable.keys(), key=self.tagTable.__getitem__)[:number])
+        return topTags
+
 
 class tag:
     """Stores all information about a given tag, including lists of which articles
@@ -47,10 +52,12 @@ have the tag and the number of times the keywork appears in each."""
     def setArticles(self, articles):
         self.taggedArticles.append(articles)
 
+articlesSet = []
 for entry in NYTAmericas.entries:
     print(entry.link)
     toParse = Article(entry.link)
     toParse.download()
     toParse.parse()
-    parsedArticle = ParsedEntry(toParse.title, toParse.text, entry.link)
-    print((parsedArticle.tagTable))
+    articlesSet.append(ParsedEntry(toParse.title, toParse.text, entry.link))
+    print((articlesSet[len(articlesSet)-1].tagTable))
+
