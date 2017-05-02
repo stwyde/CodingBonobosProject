@@ -22,18 +22,18 @@ class ParsedEntry:
 
         #creates dictionary with word occurances in the occurrenceTable dictionary object.
         wordsList = self.text.split()
-        self.cleanWordsList = []
+        cleanWordsList = []
         for word in wordsList:
             if word not in removeSet:
                 if word not in self.tagTable.keys():
                     self.tagTable[word] = 0
                 self.tagTable[word] = self.tagTable[word] + 1
-                self.cleanWordsList.append(word)
+                cleanWordsList.append(word)
 
 
         #standardizes tagList to be percentages
-        wordCount = len(self.cleanWordsList)
-        for word in self.cleanWordsList:
+        wordCount = len(cleanWordsList)
+        for word in cleanWordsList:
             rawVal = self.tagTable[word]
             self.tagTable[word] = rawVal / wordCount
 
@@ -85,6 +85,6 @@ for entry in NYTAmericas.entries:
     toParse.download()
     toParse.parse()
     articlesSet.append(ParsedEntry(toParse.title, toParse.text, entry.link))
-    print(articlesSet[i].getTopTags(10))
+    print(articlesSet[i].tagTable)
     i+=1
 
