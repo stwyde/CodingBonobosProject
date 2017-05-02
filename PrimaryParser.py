@@ -33,7 +33,7 @@ class ParsedEntry:
 
 
         #standardizes tagList to be percentages
-        wordCount = len(self.tagTable)
+        wordCount = len(wordsList)
         for word in wordsList:
             self.tagTable[word] = self.tagTable[word] / wordCount
 
