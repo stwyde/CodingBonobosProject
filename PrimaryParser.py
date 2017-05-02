@@ -2,6 +2,7 @@ from nltk.corpus import stopwords
 from newspaper import Article
 import feedparser
 import operator
+from collections import Counter
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
 removeSet = set(stopwords.words('english'))
 removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many'])
@@ -32,18 +33,22 @@ class ParsedEntry:
 
 
         #standardizes tagList to be percentages
-        wordCount = len(cleanWordsList)
-        for word in cleanWordsList:
-            rawVal = self.tagTable[word]
-            self.tagTable[word] = rawVal / wordCount
+        #wordCount = len(cleanWordsList)
+        #for word in cleanWordsList:
+        #    rawVal = self.tagTable[word]
+        #    self.tagTable[word] = rawVal / wordCount
+
+
 
     def getTopTags(self, number):
-        #http://stackoverflow.com/questions/7197315/5-maximum-values-in-a-python-dictionary
-        topKeys = (sorted(self.tagTable.keys(), key=operator.itemgetter(1))[:number])
+        #http://stackoverflow.com/questions/11902665/top-values-from-dictionary
+        top = Counter(self.tagTable)
+        top.most_common()
         topTags = {}
-        for key in topKeys:
-            topTags[key] = self.tagTable[key]
+        for k, v in top.most_common(10):
+            topTags[k] = v
         return topTags
+
 
 
 class tag:
@@ -86,5 +91,6 @@ for entry in NYTAmericas.entries:
     toParse.parse()
     articlesSet.append(ParsedEntry(toParse.title, toParse.text, entry.link))
     print(articlesSet[i].tagTable)
+    print(articlesSet[i].getTopTags(10))
     i+=1
 
