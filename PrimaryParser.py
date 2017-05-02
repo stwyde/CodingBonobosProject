@@ -96,5 +96,3 @@ for entry in NYTAmericas.entries:
     i+=1
 
 print(articleDistance(articlesSet[0], articlesSet[1]))
-
-
