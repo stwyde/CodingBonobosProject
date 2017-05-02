@@ -27,6 +27,10 @@ class ParsedEntry:
                 if word not in self.tagTable.keys():
                     self.tagTable[word] = 0
                 self.tagTable[word] = self.tagTable[word] + 1
+        #standardizes tagList to be percentages
+        articleSize = len(self.tagTable)
+        for word in wordsList:
+            self.tagTable[word] = self.tagTable[word] / articleSize
 
 class tag:
     """Stores all information about a given tag, including lists of which articles
