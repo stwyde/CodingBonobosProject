@@ -8,22 +8,25 @@ class ParsedEntry:
     title = ""
     text = ""
     url = ""
-    occurrenceTable = {}
+    tagTable = {}
     def __init__(self, name, body, link):
         self.url = link
+        #sanitizes text, sets everything to lowercase, removes numbers and symbols but keeps spaces leading to just words separated by spaces.
         lowercaseText = body.lower()
         newStr = ""
         for c in lowercaseText:
             if c.isalpha() or c==" ":
                 newStr+=c
+        #sets text and title values for the Parsed Entry to reference
         self.text = newStr
         self.title = name
+        #creates dictionary with word occurances in the occurrenceTable dictionary object.
         wordsList = self.text.split()
         for word in wordsList:
             if word not in removeSet:
-                if word not in self.occurrenceTable.keys():
-                    self.occurrenceTable[word] = 0
-                self.occurrenceTable[word] = self.occurrenceTable[word] + 1
+                if word not in self.tagTable.keys():
+                    self.tagTable[word] = 0
+                self.tagTable[word] = self.tagTable[word] + 1
 
 class tag:
     """Stores all information about a given tag, including lists of which articles
@@ -41,4 +44,4 @@ for entry in NYTAmericas.entries:
     toParse.download()
     toParse.parse()
     parsedArticle = ParsedEntry(toParse.title, toParse.text, entry.link)
-    print((parsedArticle.occurrenceTable))
+    print((parsedArticle.tagTable))
