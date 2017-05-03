@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 from sklearn import metrics
 #import matplotlib.pyplot as plt
 
-NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Europe.xml")
+NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/World.xml")
 removeSet = set(stopwords.words('english'))
 removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
 class ParsedEntry:
@@ -92,8 +92,9 @@ def tagDistanceMatrix(tagSet, labels, articleSet):
 articleSet = []
 tagSet = {} #keys are tag names, value is list of articles with that tag
 i = 0
+
 for entry in NYTAmericas.entries:
-    print(entry.link)
+    #print(entry.link)
     toParse = Article(entry.link)
     toParse.download()
     toParse.parse()
@@ -104,12 +105,28 @@ for entry in NYTAmericas.entries:
     #print(topTags)
     initTags(topTags, tagSet, entry)
     i+=1
-    
-k = 5
-print(articleDistance(articleSet[0], articleSet[1]))
+print("Articles: " + i.__str__())
 labels = tagSet.keys() #want to ENSURE the ordering is the same now and later
+print("Labels: " + len(labels).__str__())
+print("Beginning K means now with k=1:")
 distances = tagDistanceMatrix(tagSet, labels, articleSet)
-km = KMeans(n_clusters = k, random_state = 0).fit(distances)
+km = KMeans(n_clusters = 1, random_state = 0).fit(distances)
+initInertia = km.inertia_
+print(initInertia)
+elbowed = False
+k = 1
+while not elbowed:
+    k+=1
+    print("k = " + k.__str__())
+    km = KMeans(n_clusters = k, random_state = 0).fit(distances)
+    newInertia = km.inertia_
+    print(newInertia)
+    if newInertia > (initInertia * .98):
+        elbowed = True
+    else:
+        initInertia = newInertia
+
+
 print(km.labels_)
 labels = list(labels)
 clusters = [[] for i in range (0, k)]
