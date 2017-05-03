@@ -46,18 +46,6 @@ class ParsedEntry:
             topTags[k] = v
         return topTags
 
-
-
-class tag:
-    """Stores all information about a given tag, including lists of which articles
-have the tag and the number of times the keywork appears in each."""
-    def __init__(self, name):
-        self.name = name
-        self.taggedArticles = []
-
-    def setArticles(self, articles):
-        self.taggedArticles.append(articles)
-
 def articleDistance(art1, art2):
     """returns the pairwise distance between two artilces, calculated from the tags"""
     tags1 = list(art1.tagTable.keys())
@@ -79,17 +67,31 @@ def articleDistance(art1, art2):
 
     return distance
     
+def initTags(topTags, tagSet, article):
+    for tag in topTags:
+        tagSet[tag].append(article)
 
-articlesSet = []
+def tagDistanceMatrix(tagSet, articleSet):
+    """builds binary array filled with which articles have what tags"""
+    distances = numpy.array([(article in [tagSet[tag]) for article in articleSet] 
+          for tag in tagSet.keys()])
+    return distances        
+    
+
+   
+articleSet = []
+tagSet = {} #keys are tag names, value is list of articles with that tag
 i = 0
 for entry in NYTAmericas.entries:
     print(entry.link)
     toParse = Article(entry.link)
     toParse.download()
     toParse.parse()
-    articlesSet.append(ParsedEntry(toParse.title, toParse.text, entry.link))
-    print(articlesSet[i].tagTable)
-    print(articlesSet[i].getTopTags(10))
+    articleSet.append(ParsedEntry(toParse.title, toParse.text, entry.link))
+    print(articleSet[i].tagTable)
+    topTags = articleSet[i].getTopTags(10)
+    print(topTags)
+    initTags(topTags, tagSet, toParse.title)
     i+=1
 
-print(articleDistance(articlesSet[0], articlesSet[1]))
+print(articleDistance(articleSet[0], articleSet[1]))
