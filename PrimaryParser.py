@@ -1,8 +1,8 @@
 from nltk.corpus import stopwords
 from newspaper import Article
 import feedparser
-import operator
 from collections import Counter
+
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
 removeSet = set(stopwords.words('english'))
 removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
@@ -35,12 +35,6 @@ class ParsedEntry:
                 cleanWordsList.append(word)
 
         return tagTable, cleanWordsList
-        #standardizes tagList to be percentages
-        wordCount = len(cleanWordsList)
-        for word in cleanWordsList:
-            rawVal = self.tagTable[word]
-            self.tagTable[word] = rawVal / wordCount
-
 
 
     def getTopTags(self, number):
