@@ -12,7 +12,7 @@ class ParsedEntry:
         
         self.url = link
         self.title = name
-        self.tagTable, self.cleanWordsList = _preprocessText(self, body)
+        self.tagTable, self.cleanWordsList = self._preprocessText(body)
 
     def _preprocessText(self, body):
         tagTable = {}
