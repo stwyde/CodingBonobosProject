@@ -69,11 +69,14 @@ def articleDistance(art1, art2):
     
 def initTags(topTags, tagSet, article):
     for tag in topTags:
-        tagSet[tag].append(article)
+        if tag in tagSet.keys():
+            tagSet[tag].append(article)
+        else:
+            tagSet[tag] = [article]
 
 def tagDistanceMatrix(tagSet, articleSet):
     """builds binary array filled with which articles have what tags"""
-    distances = numpy.array([(article in tagSet[tag]) for article in articleSet] 
+    distances = numpy.array([[(article in tagSet[tag]) for article in articleSet] 
           for tag in tagSet.keys()])
     return distances        
     
