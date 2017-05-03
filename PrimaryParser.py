@@ -3,6 +3,8 @@ from newspaper import Article
 import feedparser
 from collections import Counter
 import numpy
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
 
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Europe.xml")
 removeSet = set(stopwords.words('english'))
@@ -104,3 +106,14 @@ for entry in NYTAmericas.entries:
 
 print(articleDistance(articleSet[0], articleSet[1]))
 distances = tagDistanceMatrix(tagSet, articleSet)
+kmeans = KMeans(n_clusters = k, random_state = 0, verbose=opts.verbose).fit(distances)
+
+print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels, km.labels_))
+print("Completeness: %0.3f" % metrics.completeness_score(labels, km.labels_))
+print("V-measure: %0.3f" % metrics.v_measure_score(labels, km.labels_))
+print("Adjusted Rand-Index: %.3f"
+      % metrics.adjusted_rand_score(labels, km.labels_))
+print("Silhouette Coefficient: %0.3f"
+      % metrics.silhouette_score(X, km.labels_, sample_size=1000))
+
+print()
