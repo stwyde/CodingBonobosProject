@@ -5,7 +5,7 @@ import operator
 from collections import Counter
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
 removeSet = set(stopwords.words('english'))
-removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many'])
+removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
 class ParsedEntry:
     #Not called article to avoid conflict with Newspaper package
     def __init__(self, name, body, link):
@@ -33,10 +33,10 @@ class ParsedEntry:
 
 
         #standardizes tagList to be percentages
-        #wordCount = len(cleanWordsList)
-        #for word in cleanWordsList:
-        #    rawVal = self.tagTable[word]
-        #    self.tagTable[word] = rawVal / wordCount
+        wordCount = len(cleanWordsList)
+        for word in cleanWordsList:
+            rawVal = self.tagTable[word]
+            self.tagTable[word] = rawVal / wordCount
 
 
 
