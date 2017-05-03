@@ -105,13 +105,15 @@ for entry in NYTAmericas.entries:
     initTags(topTags, tagSet, entry)
     i+=1
     
-k = 3
+k = 5
 print(articleDistance(articleSet[0], articleSet[1]))
 labels = tagSet.keys() #want to ENSURE the ordering is the same now and later
 distances = tagDistanceMatrix(tagSet, labels, articleSet)
 km = KMeans(n_clusters = k, random_state = 0).fit(distances)
 print(km.labels_)
+labels = list(labels)
 clusters = [[] for i in range (0, k)]
 for i in range(0, len(km.labels_)):
-    clusters[km.labels_(i)].append(labels(i))
-print(clusters)
+    clusters[km.labels_.item(i)].append(labels[i])
+for i in range (0, k):
+    print("Cluster ", i, " is: ", clusters[i])
