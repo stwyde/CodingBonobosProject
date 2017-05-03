@@ -4,7 +4,8 @@ import feedparser
 from collections import Counter
 import numpy
 from sklearn.cluster import KMeans
-import matplotlib.pyplot as plt
+from sklearn import metrics
+#import matplotlib.pyplot as plt
 
 NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Europe.xml")
 removeSet = set(stopwords.words('english'))
@@ -99,15 +100,15 @@ for entry in NYTAmericas.entries:
     entry = ParsedEntry(toParse.title, toParse.text, entry.link)
     articleSet.append(entry)
     #print(articleSet[i].tagTable)
-    topTags = articleSet[i].getTopTags(10)
+    topTags = articleSet[i].getTopTags(30)
     #print(topTags)
     initTags(topTags, tagSet, entry)
     i+=1
 
 print(articleDistance(articleSet[0], articleSet[1]))
 distances = tagDistanceMatrix(tagSet, articleSet)
-kmeans = KMeans(n_clusters = k, random_state = 0, verbose=opts.verbose).fit(distances)
-
+km = KMeans(n_clusters = 3, random_state = 0).fit(distances)
+labels = tagSet.keys()
 print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels, km.labels_))
 print("Completeness: %0.3f" % metrics.completeness_score(labels, km.labels_))
 print("V-measure: %0.3f" % metrics.v_measure_score(labels, km.labels_))
