@@ -9,9 +9,13 @@ removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said',
 class ParsedEntry:
     #Not called article to avoid conflict with Newspaper package
     def __init__(self, name, body, link):
-        self.tagTable = {}
+        
         self.url = link
         self.title = name
+        self.tagTable, self.cleanWordsList = _preprocessText(self, body)
+
+    def _preprocessText(self, body):
+        tagTable = {}
         #sanitizes text, sets everything to lowercase, removes numbers and symbols but keeps spaces leading to just words separated by spaces.
         lowercaseText = body.lower()
         newStr = ""
@@ -20,18 +24,17 @@ class ParsedEntry:
                 newStr+=c
         self.text = newStr
 
-
         #creates dictionary with word occurances in the occurrenceTable dictionary object.
         wordsList = self.text.split()
         cleanWordsList = []
         for word in wordsList:
             if word not in removeSet:
-                if word not in self.tagTable.keys():
-                    self.tagTable[word] = 0
-                self.tagTable[word] = self.tagTable[word] + 1
+                if word not in tagTable.keys():
+                    tagTable[word] = 0
+                tagTable[word] = tagTable[word] + 1
                 cleanWordsList.append(word)
 
-
+        return tagTable, cleanWordsList
         #standardizes tagList to be percentages
         #wordCount = len(cleanWordsList)
         #for word in cleanWordsList:
