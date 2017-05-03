@@ -105,11 +105,16 @@ for entry in NYTAmericas.entries:
     #print(topTags)
     initTags(topTags, tagSet, entry)
     i+=1
+
+tagFlag = True
+print("Clustering tags, not articles: ", tagFlag)
 print("Articles: " + i.__str__())
 labels = tagSet.keys() #want to ENSURE the ordering is the same now and later
 print("Labels: " + len(labels).__str__())
 print("Beginning K means now with k=1:")
 distances = tagDistanceMatrix(tagSet, labels, articleSet)
+if tagFlag is False:
+    distances = numpy.transpose(distances)
 km = KMeans(n_clusters = 1, random_state = 0).fit(distances)
 initInertia = km.inertia_
 print(initInertia)
