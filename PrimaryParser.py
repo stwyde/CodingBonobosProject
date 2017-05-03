@@ -109,12 +109,13 @@ print(articleDistance(articleSet[0], articleSet[1]))
 distances = tagDistanceMatrix(tagSet, articleSet)
 km = KMeans(n_clusters = 3, random_state = 0).fit(distances)
 labels = tagSet.keys()
-print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels, km.labels_))
-print("Completeness: %0.3f" % metrics.completeness_score(labels, km.labels_))
-print("V-measure: %0.3f" % metrics.v_measure_score(labels, km.labels_))
-print("Adjusted Rand-Index: %.3f"
-      % metrics.adjusted_rand_score(labels, km.labels_))
-print("Silhouette Coefficient: %0.3f"
-      % metrics.silhouette_score(X, km.labels_, sample_size=1000))
-
-print()
+print(km.labels_)
+##print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels, km.labels_))
+##print("Completeness: %0.3f" % metrics.completeness_score(labels, km.labels_))
+##print("V-measure: %0.3f" % metrics.v_measure_score(labels, km.labels_))
+##print("Adjusted Rand-Index: %.3f"
+##      % metrics.adjusted_rand_score(labels, km.labels_))
+##print("Silhouette Coefficient: %0.3f"
+##      % metrics.silhouette_score(X, km.labels_, sample_size=1000))
+##
+##print()
