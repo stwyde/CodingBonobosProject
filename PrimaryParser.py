@@ -78,13 +78,13 @@ def initTags(topTags, tagSet, article):
         else:
             tagSet[tag] = [article]
 
-def tagDistanceMatrix(tagSet, articleSet):
+def tagDistanceMatrix(tagSet, labels, articleSet):
     """builds binary array filled with which articles have what tags"""
     #for article in articleSet:
     #    for tag in tagSet:
     #        print(article in tagSet[tag])
     distances = numpy.array([[(article in tagSet[tag]) for article in articleSet] 
-          for tag in tagSet.keys()])
+          for tag in labels])
     return distances        
     
 
@@ -104,18 +104,14 @@ for entry in NYTAmericas.entries:
     #print(topTags)
     initTags(topTags, tagSet, entry)
     i+=1
-
+    
+k = 3
 print(articleDistance(articleSet[0], articleSet[1]))
-distances = tagDistanceMatrix(tagSet, articleSet)
-km = KMeans(n_clusters = 3, random_state = 0).fit(distances)
-labels = tagSet.keys()
+labels = tagSet.keys() #want to ENSURE the ordering is the same now and later
+distances = tagDistanceMatrix(tagSet, labels, articleSet)
+km = KMeans(n_clusters = k, random_state = 0).fit(distances)
 print(km.labels_)
-##print("Homogeneity: %0.3f" % metrics.homogeneity_score(labels, km.labels_))
-##print("Completeness: %0.3f" % metrics.completeness_score(labels, km.labels_))
-##print("V-measure: %0.3f" % metrics.v_measure_score(labels, km.labels_))
-##print("Adjusted Rand-Index: %.3f"
-##      % metrics.adjusted_rand_score(labels, km.labels_))
-##print("Silhouette Coefficient: %0.3f"
-##      % metrics.silhouette_score(X, km.labels_, sample_size=1000))
-##
-##print()
+clusters = [[] for i in range (0, k)]
+for i in range(0, len(km.labels_)):
+    clusters[km.labels_(i)].append(labels(i))
+print(clusters)
