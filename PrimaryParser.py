@@ -2,8 +2,9 @@ from nltk.corpus import stopwords
 from newspaper import Article
 import feedparser
 from collections import Counter
+import numpy
 
-NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Americas.xml")
+NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/Europe.xml")
 removeSet = set(stopwords.words('english'))
 removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
 class ParsedEntry:
@@ -76,6 +77,9 @@ def initTags(topTags, tagSet, article):
 
 def tagDistanceMatrix(tagSet, articleSet):
     """builds binary array filled with which articles have what tags"""
+    #for article in articleSet:
+    #    for tag in tagSet:
+    #        print(article in tagSet[tag])
     distances = numpy.array([[(article in tagSet[tag]) for article in articleSet] 
           for tag in tagSet.keys()])
     return distances        
@@ -90,11 +94,13 @@ for entry in NYTAmericas.entries:
     toParse = Article(entry.link)
     toParse.download()
     toParse.parse()
-    articleSet.append(ParsedEntry(toParse.title, toParse.text, entry.link))
-    print(articleSet[i].tagTable)
+    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
+    articleSet.append(entry)
+    #print(articleSet[i].tagTable)
     topTags = articleSet[i].getTopTags(10)
-    print(topTags)
-    initTags(topTags, tagSet, toParse.title)
+    #print(topTags)
+    initTags(topTags, tagSet, entry)
     i+=1
 
 print(articleDistance(articleSet[0], articleSet[1]))
+distances = tagDistanceMatrix(tagSet, articleSet)
