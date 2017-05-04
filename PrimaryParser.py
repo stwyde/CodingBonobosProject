@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 from sklearn import metrics
 #import matplotlib.pyplot as plt
 
-NYTAmericas = feedparser.parse("http://www.nytimes.com/services/xml/rss/nyt/World.xml")
+NYTAmericas = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/Europe.xml")
 removeSet = set(stopwords.words('english'))
 removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
 class ParsedEntry:
@@ -120,13 +120,13 @@ initInertia = km.inertia_
 print(initInertia)
 elbowed = False
 k = 1
-while not elbowed:
+while not elbowed and k < len(articleSet)-1:
     k+=1
     print("k = " + k.__str__())
     km = KMeans(n_clusters = k, random_state = 0).fit(distances)
     newInertia = km.inertia_
     print(newInertia)
-    if newInertia > (initInertia * .98):
+    if newInertia > (initInertia * .95):
         elbowed = True
     else:
         initInertia = newInertia
@@ -134,6 +134,8 @@ while not elbowed:
 
 print(km.labels_)
 labels = list(labels)
+if tagFlag is False: #make labels article names, not tags
+    labels = [article.title for article in articleSet]
 clusters = [[] for i in range (0, k)]
 for i in range(0, len(km.labels_)):
     clusters[km.labels_.item(i)].append(labels[i])
