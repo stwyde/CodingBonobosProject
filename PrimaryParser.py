@@ -14,7 +14,7 @@ NYTWorld = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/World.x
 NYTPol = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/Politics.xml")
 
 removeSet = set(stopwords.words('english'))
-removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
+removeSet.update(['continue', 'reading', 'lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
 class ParsedEntry:
     #Not called article to avoid conflict with Newspaper package
     def __init__(self, name, body, link):
@@ -92,61 +92,28 @@ def tagDistanceMatrix(tagSet, labels, articleSet):
           for tag in labels])
     return distances        
     
+def feedArticleParsing(feed):
+    global i
+    for entry in feed.entries:
+        toParse = Article(entry.link)
+        toParse.download()
+        toParse.parse()
+        entry = ParsedEntry(toParse.title, toParse.text, entry.link)
+        articleSet.append(entry)
+        #print(articleSet[i].tagTable)
+        topTags = articleSet[i].getTopTags(30)
+        #print(topTags)
+        initTags(topTags, tagSet, entry)
+        i+=1
 
    
 articleSet = []
 tagSet = {} #keys are tag names, value is list of articles with that tag
 i = 0
-
-for entry in NYTAmericas.entries:
-    print("Americas")
-    toParse = Article(entry.link)
-    toParse.download()
-    toParse.parse()
-    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
-    articleSet.append(entry)
-    #print(articleSet[i].tagTable)
-    topTags = articleSet[i].getTopTags(30)
-    #print(topTags)
-    initTags(topTags, tagSet, entry)
-    i+=1
-for entry in NYTEurope.entries:
-    print("Europe")
-    toParse = Article(entry.link)
-    toParse.download()
-    toParse.parse()
-    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
-    articleSet.append(entry)
-    #print(articleSet[i].tagTable)
-    topTags = articleSet[i].getTopTags(30)
-    #print(topTags)
-    initTags(topTags, tagSet, entry)
-    i+=1
-for entry in NYTPol.entries:
-    print("Pol")
-    toParse = Article(entry.link)
-    toParse.download()
-    toParse.parse()
-    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
-    articleSet.append(entry)
-    #print(articleSet[i].tagTable)
-    topTags = articleSet[i].getTopTags(30)
-    #print(topTags)
-    initTags(topTags, tagSet, entry)
-    i+=1
-
-for entry in NYTWorld.entries:
-    print("World")
-    toParse = Article(entry.link)
-    toParse.download()
-    toParse.parse()
-    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
-    articleSet.append(entry)
-    #print(articleSet[i].tagTable)
-    topTags = articleSet[i].getTopTags(30)
-    #print(topTags)
-    initTags(topTags, tagSet, entry)
-    i+=1
+feedArticleParsing(NYTAmericas)
+feedArticleParsing(NYTEurope)
+feedArticleParsing(NYTPol)
+feedArticleParsing(NYTWorld)
 
 
 
