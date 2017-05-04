@@ -7,7 +7,12 @@ from sklearn.cluster import KMeans
 from sklearn import metrics
 #import matplotlib.pyplot as plt
 
-NYTAmericas = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/Europe.xml")
+NYTAmericas = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/Americas.xml")
+NYTEurope = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/Europe.xml")
+NYTUS = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/US.xml")
+NYTWorld = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/World.xml")
+NYTPol = feedparser.parse("http://rss.nytimes.com/services/xml/rss/nyt/Politics.xml")
+
 removeSet = set(stopwords.words('english'))
 removeSet.update(['lately', 'wanted', 'call', 'later', 'latest', 'main', 'said','way', 'many', 'available', 'efforts', 'similar', 'programadvertisement', 'multiple', 'months' 'essentially', 'identify', 'include', 'name'])
 class ParsedEntry:
@@ -94,7 +99,31 @@ tagSet = {} #keys are tag names, value is list of articles with that tag
 i = 0
 
 for entry in NYTAmericas.entries:
-    #print(entry.link)
+    print("Americas")
+    toParse = Article(entry.link)
+    toParse.download()
+    toParse.parse()
+    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
+    articleSet.append(entry)
+    #print(articleSet[i].tagTable)
+    topTags = articleSet[i].getTopTags(30)
+    #print(topTags)
+    initTags(topTags, tagSet, entry)
+    i+=1
+for entry in NYTEurope.entries:
+    print("Europe")
+    toParse = Article(entry.link)
+    toParse.download()
+    toParse.parse()
+    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
+    articleSet.append(entry)
+    #print(articleSet[i].tagTable)
+    topTags = articleSet[i].getTopTags(30)
+    #print(topTags)
+    initTags(topTags, tagSet, entry)
+    i+=1
+for entry in NYTPol.entries:
+    print("Pol")
     toParse = Article(entry.link)
     toParse.download()
     toParse.parse()
@@ -106,7 +135,22 @@ for entry in NYTAmericas.entries:
     initTags(topTags, tagSet, entry)
     i+=1
 
-tagFlag = True
+for entry in NYTWorld.entries:
+    print("World")
+    toParse = Article(entry.link)
+    toParse.download()
+    toParse.parse()
+    entry = ParsedEntry(toParse.title, toParse.text, entry.link)
+    articleSet.append(entry)
+    #print(articleSet[i].tagTable)
+    topTags = articleSet[i].getTopTags(30)
+    #print(topTags)
+    initTags(topTags, tagSet, entry)
+    i+=1
+
+
+
+tagFlag = False
 print("Clustering tags, not articles: ", tagFlag)
 print("Articles: " + i.__str__())
 labels = tagSet.keys() #want to ENSURE the ordering is the same now and later
@@ -126,7 +170,7 @@ while not elbowed and k < len(articleSet)-1:
     km = KMeans(n_clusters = k, random_state = 0).fit(distances)
     newInertia = km.inertia_
     print(newInertia)
-    if newInertia > (initInertia * .95):
+    if newInertia > (initInertia * .7):
         elbowed = True
     else:
         initInertia = newInertia
